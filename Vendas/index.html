@@ -3,287 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedidos Uniformes</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #082d57;
-            color: #333;
-        }
-        header {
-            background-color: #0c3c74;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        h1 {
-            margin: 0;
-            font-size: 2.5em;
-        }
-        .product {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-            margin-left: 65px;
-            background: #ffffff;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            text-align: center;
-            width: calc(100% - 40px);
-            max-width: 300px;
-            display: inline-block;
-        }
-        .product:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-        }
-        .product img {
-            max-width: 100%;
-            border-radius: 8px;
-        }
-        #modal, #customerModal {
-            display: none;
-            position: fixed;
-            z-index: 1001;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-            padding-top: 60px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        #modal.show, #customerModal.show {
-            display: block;
-            opacity: 1;
-        }
-        #modalContent, #customerModalContent {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 90%;
-            max-width: 400px;
-            border-radius: 8px;
-            animation: slideIn 0.5s;
-        }
-        @keyframes slideIn {
-            from { transform: translateY(-30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .order-button {
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-            margin-top: 10px;
-        }
-        .order-button:hover {
-            background-color: #4cae4c;
-            transform: scale(1.05);
-        }
-        #cartButton {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #ffffff;
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s, transform 0.2s;
-        }
-        #cartButton:hover {
-            background-color: #c9302c;
-            transform: scale(1.05);
-        }
-        #cartButton .cart-count {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #ffcc00;
-            color: #333;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        #cart {
-            position: fixed;
-            top: 60px;
-            right: 20px;
-            width: 300px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            background: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            display: none;
-            border-radius: 8px;
-            transition: opacity 0.3s;
-        }
-        #cart h2 {
-            margin: 0 0 10px;
-            font-size: 20px;
-            color: #4a90e2;
-        }
-        #cartItems {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-        .cart-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .cart-item img {
-            width: 50px;
-            height: 50px;
-            border-radius: 5px;
-            margin-right: 10px;
-            transition: transform 0.3s;
-        }
-        .cart-item img:hover {
-            transform: scale(1.1);
-        }
-        .remove-button {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: auto;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-        .remove-button:hover {
-            background-color: #c82333;
-            transform: scale(1.05);
-        }
-        .customer-form {
-            display: flex;
-            flex-direction: column;
-        }
-        .customer-form input, .customer-form select {
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        /* Media Queries para Responsividade */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2em;
-            }
-            .product {
-                width: calc(100% - 30px);
-                margin: 10px 0;
-            }
-            #cart {
-                width: 90%;
-                right: 5%;
-            }
-        }
-        .product img {
-    width: 150px; /* Largura padrão */
-    height: 150px; /* Altura padrão */
-    object-fit: cover; /* Mantém a proporção da imagem */
-    border-radius: 8px;
-}
-
-    </style>
+    <title>Pedidos Carmo</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Pedido de Uniformes Auxiliar Serviços</h1>
+        <h1>Pedidos Carmo</h1>
+        <div class="support-message">
+            <h4>Suporte direto a</h4> <strong>Auxiliar Serviços</strong>
+            <img src="imagens/logo.jpeg" alt="Logo Auxiliar Serviço" class="logo">
+        </div>
     </header>
-    <div class="product" onclick="openProductModal('Jaqueta', 'produto1.jpg', 'Descrição das jaquetas', ['40', '42', '44','48', '50','52','54', '58', '60','62', '64', '68', 'outros'])">
-        <img src="imagens/jaqueta.webp" alt="Jaqueta">
-        <h2>Jaqueta</h2>
+
+    <div class="welcome-message">
+        Boas-vindas ao Pedidos Carmo! Facilitando seu pedido.
     </div>
-    <div class="product" onclick="openProductModal('Calça', 'jaquetas.jpg', 'Descrição das Calças', ['38','40', '42', '44','48', '50','52','54', '58', '60','62', '64', '68', 'outros'])">
-        <img src="imagens/calça.webp" alt="Calça">
-        <h2>Calça</h2>
-    </div>
-    <div class="product" onclick="openProductModal('Coturno', 'produto1.jpg', 'Descrição dos Coturnos', ['36', '37', '38','39', '40','41','42', '43', '44','45','outros'])">
-        <img src="imagens/coturno.webp" alt="Coturno">
-        <h2>Coturno</h2>
-    </div>
-    <div class="product" onclick="openProductModal('Meias', 'produto1.jpg', 'Descrição das Meias', ['36', '37', '38','39', '40','41','42', '43', '44','45','outros'])">
-        <img src="imagens/meias.webp" alt="Meias">
-        <h2>Meias</h2>
-    </div>
-    <div class="product" onclick="openProductModal('Camisa Azul', 'produto1.jpg', 'Descrição da Camisa azul', ['01', '02', '03','04', '60','07','08', '09','outros'])">
-        <img src="imagens/camisaazul.webp" alt="Camisa Azul">
-        <h2>Camisa Azul</h2>
-    </div>
-    <div class="product" onclick="openProductModal('Camisa Branca', 'produto1.jpg', 'Descrição das Camisas', ['01', '02', '03','04', '60','07','08', '09','outros'])">
-        <img src="imagens/camisabranca.webp" alt="Camisa branca">
-        <h2>Camisa Branca</h2>
-    </div>
-    <div class="product" onclick="openProductModal('Camisa Branca manga curta', 'produto1.jpg', 'Descrição das Camisas', ['01', '02', '03','04', '60','07','08', '09','outros'])">
-        <img src="imagens/camisacurt.webp" alt="Camisa branca manga curta">
-        <h2>Camisa Branca manga curta</h2>
-    </div>
-    <div class="product" onclick="openProductModal('Capa para colete balistico', 'produto1.jpg', 'Descrição das Capas para colete balistico', ['P', 'M', 'G','GG', 'EXG'])">
-        <img src="imagens/coletebala.jpg" alt="Capa para colete balistico">
-        <h2>Capa para colete balistico</h2>
-    </div>
-    <div class="product" onclick="openProductModal('Cinto', 'produto1.jpg', 'Descrição dos cintos', ['40', '42', '44','48', '50','52','54', '58', '60','62', '64', '68', 'outros'])">
-        <img src="imagens/CINTO-LISO.webp" alt="Cinto">
-        <h2>Cinto</h2>
-    </div>
-    <div class="product" onclick="openProductModal('Coldre', 'produto1.jpg', 'Descrição dos Coldres', ['tamanho único'])">
-        <img src="imagens/coldre.webp" alt="Coldre">
-        <h2>Coldre</h2>
-    </div>
-    <div class="product" onclick="openProductModal('Boné', 'produto1.jpg', 'Descrição dos Bonés', ['tamanho único'])">
-        <img src="imagens/bone.webp" alt="Boné">
-        <h2>Boné</h2>
-    </div>
-    <div class="product" onclick="openProductModal('Colete refletivo', 'produto1.jpg', 'Descrição dos Coletes refletivo', ['40', '42', '44','48', '50','52','54', '58', '60','62', '64', '68', 'outros'])">
-        <img src="imagens/coleterefletivo.webp" alt="Colete refletivo">
-        <h2>Colete refletivo</h2>
-    </div>
-    <div class="product" onclick="openProductModal('Cordão fiel', 'produto1.jpg', 'Descrição do Cordão fiel', ['tamanho único'])">
-        <img src="imagens/cordaofiel.webp" alt="Cordão fiel">
-        <h2>Cordão fiel</h2>
-    </div>
-    <div class="product" onclick="openProductModal('Apito', 'produto1.jpg', 'Descrição dos Apitos', ['tamanho único'])">
-        <img src="imagens/apito.jpg" alt="Apito">
-        <h2>Apito</h2>
+
+    <div class="product-container">
+        <div class="product" onclick="openProductModal('Jaqueta', 'imagens/jaqueta.webp', 'Descrição das jaquetas', ['40', '42', '44','48', '50','52','54', '58', '60','62', '64', '68', 'outros'])">
+            <img src="imagens/jaqueta.webp" alt="Jaqueta">
+            <h2>Jaqueta</h2>
+        </div>
+        <div class="product" onclick="openProductModal('Calça', 'imagens/calça.webp', 'Descrição das Calças', ['38','40', '42', '44','48', '50','52','54', '58', '60','62', '64', '68', 'outros'])">
+            <img src="imagens/calça.webp" alt="Calça">
+            <h2>Calça</h2>
+        </div>
+        <div class="product" onclick="openProductModal('Camisa Azul', 'imagens/camisaazul.webp', 'Descrição da Camisa azul', ['01', '02', '03','04', '60','07','08', '09','outros'])">
+            <img src="imagens/camisaazul.webp" alt="Camisa Azul">
+            <h2>Camisa Azul</h2>
+        </div>
+        <div class="product" onclick="openProductModal('Camisa Branca', 'imagens/camisabranca.webp', 'Descrição das Camisas', ['01', '02', '03','04', '60','07','08', '09','outros'])">
+            <img src="imagens/camisabranca.webp" alt="Camisa Branca">
+            <h2>Camisa Branca</h2>
+        </div>
+        <div class="product" onclick="openProductModal('Camisa Branca manga curta', 'imagens/camisacurt.webp', 'Descrição das Camisas', ['01', '02', '03','04', '60','07','08', '09','outros'])">
+            <img src="imagens/camisacurt.webp" alt="Camisa Branca manga curta">
+            <h2>Camisa Branca manga curta</h2>
+        </div>
+        <div class="product" onclick="openProductModal('Meias', 'imagens/meias.webp', 'Descrição das Meias', ['36', '37', '38','39', '40','41','42', '43', '44','45','outros'])">
+            <img src="imagens/meias.webp" alt="Meias">
+            <h2>Meias</h2>
+        </div>
+        <div class="product" onclick="openProductModal('Coturno', 'imagens/coturno.webp', 'Descrição dos Coturnos', ['36', '37', '38','39', '40','41','42', '43', '44','45','outros'])">
+            <img src="imagens/coturno.webp" alt="Coturno">
+            <h2>Coturno</h2>
+        </div>
+        <div class="product" onclick="openProductModal('Cinto', 'imagens/CINTO-LISO.webp', 'Descrição dos cintos', ['40', '42', '44','48', '50','52','54', '58', '60','62', '64', '68', 'outros'])">
+            <img src="imagens/CINTO-LISO.webp" alt="Cinto">
+            <h2>Cinto</h2>
+        </div>
+        <div class="product" onclick="openProductModal('Coldre', 'imagens/coldre.webp', 'Descrição dos Coldres', ['tamanho único'])">
+            <img src="imagens/coldre.webp" alt="Coldre">
+            <h2>Coldre</h2>
+        </div>
+        <div class="product" onclick="openProductModal('Boné', 'imagens/bone.webp', 'Descrição dos Bonés', ['tamanho único'])">
+            <img src="imagens/bone.webp" alt="Boné">
+            <h2>Boné</h2>
+        </div>
+        <div class="product" onclick="openProductModal('Colete refletivo', 'imagens/coleterefletivo.webp', 'Descrição dos Coletes refletivo', ['40', '42', '44','48', '50','52','54', '58', '60','62', '64', '68', 'outros'])">
+            <img src="imagens/coleterefletivo.webp" alt="Colete refletivo">
+            <h2>Colete refletivo</h2>
+        </div>
+        <div class="product" onclick="openProductModal('Cordão fiel', 'imagens/cordaofiel.webp', 'Descrição do Cordão fiel', ['tamanho único'])">
+            <img src="imagens/cordaofiel.webp" alt="Cordão fiel">
+            <h2>Cordão fiel</h2>
+        </div>
+        <div class="product" onclick="openProductModal('Capa para colete balistico', 'imagens/coletebala.jpg', 'Descrição das Capas para colete balistico', ['P', 'M', 'G','GG', 'EXG'])">
+            <img src="imagens/coletebala.jpg" alt="Capa para colete balistico">
+            <h2>Capa para colete balistico</h2>
+        </div>
+        <div class="product" onclick="openProductModal('Apito', 'imagens/apito.jpg', 'Descrição dos Apitos', ['tamanho único'])">
+            <img src="imagens/apito.png" alt="Apito">
+            <h2>Apito</h2>
+        </div>
     </div>
 
     <button id="cartButton" onclick="toggleCart()">
@@ -291,7 +83,7 @@
         <span class="cart-count" id="cartCount">0</span>
     </button>
     <div id="cart">
-        <h2>Carrinho de Compras</h2>
+        <h2>Carrinho de Pedidos</h2>
         <ul id="cartItems"></ul>
         <button class="order-button" onclick="openCustomerModal()">Enviar Pedido</button>
     </div>
@@ -327,92 +119,13 @@
             <button class="order-button" onclick="submitOrder()">Enviar Pedido</button>
         </div>
     </div>
-
-    <script>
-        const cart = [];
-
-        function openProductModal(name, image, description, colors) {
-            document.getElementById('modalProductName').textContent = name;
-            document.getElementById('modalProductImage').src = image;
-            document.getElementById('modalProductDescription').textContent = description;
-            const colorSelect = document.getElementById('modalProductColor');
-            colorSelect.innerHTML = ''; // Limpa as opções anteriores
-            colors.forEach(color => {
-                const option = document.createElement('option');
-                option.value = color;
-                option.textContent = color.charAt(0).toUpperCase() + color.slice(1); // Capitaliza a primeira letra
-                colorSelect.appendChild(option);
-            });
-            document.getElementById('modal').classList.add('show');
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.remove('show');
-        }
-
-        function addToCartFromModal() {
-            const name = document.getElementById('modalProductName').textContent;
-            const image = document.getElementById('modalProductImage').src;
-            const color = document.getElementById('modalProductColor').value;
-
-            cart.push({ product: name, image, color });
-            updateCart();
-            closeModal();
-        }
-
-        function updateCart() {
-            const cartItems = document.getElementById('cartItems');
-            cartItems.innerHTML = '';
-            cart.forEach((item) => {
-                const li = document.createElement('li');
-                li.className = 'cart-item';
-                li.innerHTML = `<img src="${item.image}" alt="${item.product}"><span>${item.product} - Tamanho: ${item.color}</span>`;
-                cartItems.appendChild(li);
-            });
-            document.getElementById('cartCount').textContent = cart.length;
-        }
-
-        function toggleCart() {
-            const cartDiv = document.getElementById('cart');
-            cartDiv.style.display = cartDiv.style.display === 'none' || cartDiv.style.display === '' ? 'block' : 'none';
-        }
-
-        function openCustomerModal() {
-            document.getElementById('customerModal').classList.add('show');
-        }
-
-        function closeCustomerModal() {
-            document.getElementById('customerModal').classList.remove('show');
-        }
-
-        function toggleDeliveryFields() {
-            const deliveryOption = document.getElementById('deliveryOption').value;
-            const deliveryAddressField = document.getElementById('deliveryAddressField');
-            deliveryAddressField.style.display = deliveryOption === 'entrega' ? 'block' : 'none';
-        }
-
-        function submitOrder() {
-    const name = document.getElementById('customerName').value;
-    const deliveryOption = document.getElementById('deliveryOption').value;
-    const deliveryAddress = deliveryOption === 'entrega' ? 
-        document.getElementById('deliveryAddress').value : 
-        'Retirada na loja';
-
-    const message = `*Pedido Novo!*\n` + 
-        `Nome: ${name}\n` + 
-        `Opção: ${deliveryOption}\n` + 
-        `Endereço de Entrega: ${deliveryAddress}\n` + 
-        `Produtos:\n` + 
-        cart.map(item => `- ${item.product}, Tamanho: ${item.color}`).join('\n');
-
-    const emailUrl = `mailto:aux.supervisao@auxiliarservicos.com.br?subject=Novo Pedido&body=${encodeURIComponent(message)}`;
-
-    window.location.href = emailUrl;
-    closeCustomerModal();
-    cart.length = 0; // Limpa o carrinho
-    updateCart();
-}
-
-    </script>
+    
+    <footer>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Pedidos Carmo. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+    
+    <script src="scripts.js"></script>
 </body>
 </html>
